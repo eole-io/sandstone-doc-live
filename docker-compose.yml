@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+    # Chat
+    chat-websocket-server:
+        container_name: sandstone-doc-live-chat-ws
+        build: docker/php-fpm
+        command: php src/chat/websocket-server.php
+        ports:
+            - 25569:25569
+        volumes:
+            - .:/var/www/html/
+
+    # Push
+    push-rest-api:
+        image: nginx
+        ports:
+            - 8480:80
+        volumes:
+            - .:/var/www/html/
+            - ./docker/rest-api/nginx.conf:/etc/nginx/conf.d/default.conf
+        links:
+            - php-fpm
+
+    push-websocket-server:
+        container_name: sandstone-doc-live-push-ws
+        build: docker/php-fpm
+        command: php src/push/websocket-server.php
+        ports:
+            - 25570:25570
+        volumes:
+            - .:/var/www/html/
+
+    # PHP fpm (common)
+    php-fpm:
+        container_name: sandstone-doc-live-php
+        build: docker/php-fpm
+        volumes:
+            - .:/var/www/html/
+        links:
+            - chat-websocket-server
+            - push-websocket-server
