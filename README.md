@@ -15,6 +15,11 @@ cd sandstone-doc-live/
 make
 ```
 
+### Install HTTPS
+
+The quick solution is to use stunnel, letsencrypt,
+and see `stunnel.conf` in the root of this repository as an example.
+
 
 ## License
 
