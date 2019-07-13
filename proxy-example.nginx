@@ -1,0 +1,35 @@
+server {
+    listen 80;
+    server_name sandstone-doc-live.alcalyn.app;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+
+    server_name sandstone-doc-live.alcalyn.app;
+
+    ssl_certificate /etc/letsencrypt/live/alcalyn.app/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/alcalyn.app/privkey.pem;
+
+    location /api {
+        proxy_pass http://0.0.0.0:8480;
+        proxy_set_header Host $host;
+    }
+
+    location /websocket/chat {
+        proxy_pass http://0.0.0.0:25569;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+
+    location /websocket/push {
+        proxy_pass http://0.0.0.0:25570;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+}
